@@ -8,7 +8,7 @@ certbot certonly -n -m $EMAIL --agree-tos -d *.$DOMAIN -a certbot-dns-godaddy:dn
 
 echo "Exposing certs as secrets..."
 
-./kubectl create --dry-run=true -o yaml secret generic wildcard-$DOMAIN \
+./kubectl create --dry-run=true -o yaml secret generic tls-wildcard-$DOMAIN \
     --from-file=/etc/letsencrypt/live/$DOMAIN/cert.pem\
     --from-file=/etc/letsencrypt/live/$DOMAIN/fullchain.pem\
     --from-file=/etc/letsencrypt/live/$DOMAIN/chain.pem\
