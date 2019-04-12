@@ -8,11 +8,9 @@ certbot certonly $EXTRA -n -m $EMAIL --agree-tos -d *.$DOMAIN -a certbot-dns-god
 
 echo "Exposing certs as secrets..."
 
-./kubectl create --dry-run=true -o yaml secret generic $SECRETNAME \
-    --from-file=/etc/letsencrypt/live/$DOMAIN/cert.pem\
-    --from-file=/etc/letsencrypt/live/$DOMAIN/fullchain.pem\
-    --from-file=/etc/letsencrypt/live/$DOMAIN/chain.pem\
-    --from-file=/etc/letsencrypt/live/$DOMAIN/privkey.pem\
+./kubectl create --dry-run=true -o yaml secret tls $SECRETNAME \
+    --cert /etc/letsencrypt/live/$DOMAIN/fullchain.pem\
+    --key /etc/letsencrypt/live/$DOMAIN/privkey.pem\
     > secret.yaml
 
 ./kubectl apply -f secret.yaml
