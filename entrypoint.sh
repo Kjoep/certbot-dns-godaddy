@@ -3,7 +3,7 @@
 echo certbot_dns_godaddy:dns_godaddy_key=$GODADDY_KEY > godaddy.ini
 echo certbot_dns_godaddy:dns_godaddy_secret=$GODADDY_SECRET >> godaddy.ini
 
-certbot certonly -n -m $EMAIL --agree-tos -d *.$DOMAIN -a certbot-dns-godaddy:dns-godaddy \
+certbot certonly $EXTRA -n -m $EMAIL --agree-tos -d *.$DOMAIN -a certbot-dns-godaddy:dns-godaddy \
         --certbot-dns-godaddy:dns-godaddy-credentials godaddy.ini
 
 echo "Exposing certs as secrets..."
