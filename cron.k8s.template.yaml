@@ -1,0 +1,17 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: certbot-update
+spec:
+  schedule: "0 8 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: certbot-update
+            image: <image>
+            envFrom:
+            - secretRef:
+                name: certbot-godaddy
+          restartPolicy: OnFailure
