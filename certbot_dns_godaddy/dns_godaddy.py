@@ -1,4 +1,4 @@
-"""DNS Authenticator for DNSimple DNS."""
+"""DNS Authenticator for GoDaddy DNS."""
 import logging
 
 import zope.interface
@@ -8,8 +8,6 @@ from certbot.plugins import dns_common
 from godaddypy import Account, Client
 
 logger = logging.getLogger(__name__)
-
-ACCOUNT_URL = 'https://dnsimple.com/user'
 
 @zope.interface.implementer(interfaces.IAuthenticator)
 @zope.interface.provider(interfaces.IPluginFactory)
@@ -32,7 +30,7 @@ class Authenticator(dns_common.DNSAuthenticator):
     @classmethod
     def add_parser_arguments(cls, add):  # pylint: disable=arguments-differ
         super(Authenticator, cls).add_parser_arguments(add, default_propagation_seconds=30)
-        add('credentials', help='DNSimple credentials INI file.')
+        add('credentials', help='Godaddy credentials INI file.')
 
     def more_info(self):  # pylint: disable=missing-docstring,no-self-use
         return 'This plugin configures a DNS TXT record to respond to a dns-01 challenge using ' + \
