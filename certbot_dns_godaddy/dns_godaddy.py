@@ -49,13 +49,13 @@ class Authenticator(dns_common.DNSAuthenticator):
     def _perform(self, domain, validation_name, validation):
         self._get_client().add_record(domain, {
             'type': 'TXT',
-            'name': self.unsuffix(validation_name, f'.{domain}'),
+            'name': self._unsuffix(validation_name, f'.{domain}'),
             'data': validation,
             'ttl': self.ttl
         })
 
     def _cleanup(self, domain, validation_name, validation):
-        self._get_client().delete_records(domain, self.unsuffix(validation_name, f'.{domain}'), record_type='TXT')
+        self._get_client().delete_records(domain, self._unsuffix(validation_name, f'.{domain}'), record_type='TXT')
 
     def _get_client(self) -> Client:
         if not self._client:
