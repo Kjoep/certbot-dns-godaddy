@@ -1,0 +1,29 @@
+image: docker:1.11
+services:
+  - docker:dind
+
+stages:
+  - build
+  - push
+
+build_image:
+  stage: build
+  script:
+    - docker build -t $TEST_IMAGE .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $TEST_IMAGE
+
+update_latest:
+  stage: push
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker pull $TEST_IMAGE
+    - docker tag $TEST_IMAGE $RELEASE_IMAGE
+    - docker push $RELEASE_IMAGE
+  only:
+    - master
+
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
