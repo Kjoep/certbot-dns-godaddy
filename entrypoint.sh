@@ -14,3 +14,8 @@ echo "Exposing certs as secrets..."
     > secret.yaml
 
 ./kubectl apply -f secret.yaml
+for i in $(echo $TARGET_NAMESPACES | sed "s/,/ /g")
+do
+    echo "Exposing as secret in namespace ${i}"
+    ./kubectl -n $i apply -f secret.yaml
+done
