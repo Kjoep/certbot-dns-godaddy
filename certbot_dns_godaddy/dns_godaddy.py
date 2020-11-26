@@ -47,21 +47,30 @@ class Authenticator(dns_common.DNSAuthenticator):
         )
 
     def _perform(self, domain, validation_name, validation):
-        self._get_client().add_record(domain, {
+        second_level_domain = self._get_second_level_domain(domain)
+        self._get_client().add_record(second_level_domain, {
             'type': 'TXT',
-            'name': self._unsuffix(validation_name, f'.{domain}'),
+            'name': self._unsuffix(validation_name, f'.{second_level_domain}'),
             'data': validation,
             'ttl': self.ttl
         })
 
     def _cleanup(self, domain, validation_name, validation):
-        self._get_client().delete_records(domain, self._unsuffix(validation_name, f'.{domain}'), record_type='TXT')
+        second_level_domain = self._get_second_level_domain(domain)
+        self._get_client().delete_records(second_level_domain, self._unsuffix(validation_name, f'.{second_level_domain}'), record_type='TXT')
 
     def _get_client(self) -> Client:
         if not self._client:
             account = Account(api_key=self.credentials.conf('key'), api_secret=self.credentials.conf('secret'))
             self._client = Client(account)
         return self._client
+
+    def _get_second_level_domain(self, domain):
+        """
+        In case of a certificate for subdomain (a.b.com), GoDaddy would not find it - we have to change 2nd level domain (b.com)
+        This method returns only 2 top levels of given domain for godadddypy to work on.  
+        """
+        return '.'.join(domain.split('.')[-2:])
 
     def _unsuffix(self, record: str, suffix: str):
         """ GoDaddy wants to have only the first part of the domain record (so for a.b.com, for domain b.com,
